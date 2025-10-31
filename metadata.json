@@ -1,0 +1,8 @@
+{
+  "name": "PetPal care AI",
+  "description": "A modern minimalist AI-based Pet Routine & Health Tracker App to help pet owners track their pets’ daily routines, health, and happiness using AI.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
