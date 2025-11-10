@@ -94,60 +94,79 @@ const App: React.FC = () => {
 
   useEffect(() => {
     checkReminders();
+    const interval = setInterval(checkReminders, 60 * 60 * 1000); // Check every hour
+    return () => clearInterval(interval);
   }, [checkReminders]);
 
-  const renderContent = () => {
-    if (!currentPet) {
-        if (activeTab !== 'Profile') setActiveTab('Profile');
-        return <Profile 
-            pets={pets} 
-            setPets={setPets} 
-            currentPetId={currentPetId} 
-            setCurrentPetId={setCurrentPetId}
-        />;
-    }
 
-    switch (activeTab) {
-      case 'Home':
-        return <Home pet={currentPet} setActiveTab={setActiveTab} />;
-      case 'Routine':
-        return <Routine pet={currentPet} />;
-      case 'Chat':
-        return <Chat pet={currentPet} />;
-      case 'Health':
-        return <Health pet={currentPet} />;
-      case 'Community':
-        return <Community />;
-      case 'Profile':
-        return <Profile 
-            pets={pets} 
-            setPets={setPets}
-            currentPetId={currentPetId}
-            setCurrentPetId={setCurrentPetId}
-        />;
-      default:
-        return <Home pet={currentPet} setActiveTab={setActiveTab}/>;
-    }
+  const renderContent = () => {
+    const contentKey = `${activeTab}-${currentPetId || 'no-pet'}`;
+    const component = (() => {
+      if (!currentPet) {
+          if (activeTab !== 'Profile') setActiveTab('Profile');
+          return <Profile 
+              pets={pets} 
+              setPets={setPets} 
+              currentPetId={currentPetId} 
+              setCurrentPetId={setCurrentPetId}
+          />;
+      }
+
+      switch (activeTab) {
+        case 'Home':
+          return <Home pet={currentPet} setActiveTab={setActiveTab} />;
+        case 'Routine':
+          return <Routine pet={currentPet} />;
+        case 'Chat':
+          return <Chat pet={currentPet} />;
+        case 'Health':
+          return <Health pet={currentPet} />;
+        case 'Community':
+          return <Community />;
+        case 'Profile':
+          return <Profile 
+              pets={pets} 
+              setPets={setPets}
+              currentPetId={currentPetId}
+              setCurrentPetId={setCurrentPetId}
+          />;
+        default:
+          return <Home pet={currentPet} setActiveTab={setActiveTab}/>;
+      }
+    })();
+
+    return <div key={contentKey} className="animate-fade-in">{component}</div>;
   };
   
-  const NavItem: React.FC<{ tabName: string; icon: React.ReactNode }> = ({ tabName, icon }) => (
-    <button
-      onClick={() => setActiveTab(tabName)}
-      className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-colors duration-300 ${activeTab === tabName ? 'text-[#A2D2FF]' : 'text-gray-400'}`}
-      aria-label={tabName}
-    >
-      {icon}
-      <span className={`text-xs mt-1 ${activeTab === tabName ? 'font-semibold' : 'font-normal'}`}>{tabName}</span>
-    </button>
-  );
+  const NavItem: React.FC<{ tabName: string; icon: React.ReactNode }> = ({ tabName, icon }) => {
+    const isActive = activeTab === tabName;
+    return (
+      <button
+        onClick={() => setActiveTab(tabName)}
+        className="flex flex-col items-center justify-center w-full h-16 transition-all duration-300 transform focus:outline-none group"
+        aria-label={tabName}
+      >
+        <div className={`relative transition-all duration-300 ${isActive ? 'transform -translate-y-2' : ''}`}>
+          <div className={`absolute -inset-2.5 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-full transition-all duration-300 opacity-0 scale-75 blur-md ${isActive ? 'opacity-30 scale-100' : ''}`}></div>
+          <div className={`relative p-3 rounded-full transition-all duration-300 ${isActive ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
+            <div className={`transition-colors duration-300 ${isActive ? 'text-[var(--primary)]' : 'text-gray-400 group-hover:text-[var(--primary)]'}`}>
+              {icon}
+            </div>
+          </div>
+        </div>
+        <span className={`text-xs mt-1 transition-all duration-300 font-medium ${isActive ? 'opacity-0' : 'opacity-100 group-hover:text-gray-800'}`}>{tabName}</span>
+      </button>
+    );
+  };
+
 
   return (
-    <div className="bg-[#FFFDF7] min-h-screen text-gray-800 font-sans flex flex-col">
-      <main className="flex-grow pb-20">
+    <div className="bg-[var(--background)] min-h-screen text-[var(--text-dark)] font-sans flex flex-col">
+       <main className="flex-grow pb-24">
         {renderContent()}
       </main>
-      <footer className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)] rounded-t-2xl z-50">
-        <nav className="flex justify-around items-center h-16">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/70 backdrop-blur-xl shadow-[0_-4px_30px_rgba(0,0,0,0.06)] rounded-t-[2.5rem] z-50">
+        <nav className="flex justify-around items-center h-20 px-2">
           <NavItem tabName="Home" icon={<HomeIcon />} />
           <NavItem tabName="Routine" icon={<CalendarIcon />} />
           <NavItem tabName="Chat" icon={<ChatIcon />} />

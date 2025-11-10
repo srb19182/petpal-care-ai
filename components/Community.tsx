@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import type { CommunityPost, Vet } from '../types';
 import { findNearbyVets } from '../services/geminiService';
@@ -12,13 +11,13 @@ const Community: React.FC = () => {
     const [activeTab, setActiveTab] = useState('Feed');
 
     return (
-        <div className="p-6">
+        <div className="p-6 pb-28">
             <h1 className="text-3xl font-bold mb-6">Community Hub</h1>
-             <div className="flex border-b border-gray-200 mb-6">
-                <TabButton name="Feed" activeTab={activeTab} setActiveTab={setActiveTab} />
-                <TabButton name="Vet Finder" activeTab={activeTab} setActiveTab={setActiveTab} />
+             <div className="bg-gray-100 p-1.5 rounded-full flex space-x-2 mb-6">
+                <TabButton name="Feed" activeTab={activeTab} setActiveTab={setActiveTab} color="var(--accent)"/>
+                <TabButton name="Vet Finder" activeTab={activeTab} setActiveTab={setActiveTab} color="var(--accent)"/>
             </div>
-            <div>
+            <div className="animate-fade-in">
                 {activeTab === 'Feed' && <Feed />}
                 {activeTab === 'Vet Finder' && <VetFinder />}
             </div>
@@ -26,10 +25,11 @@ const Community: React.FC = () => {
     );
 };
 
-const TabButton: React.FC<{name: string, activeTab: string, setActiveTab: (name: string) => void}> = ({ name, activeTab, setActiveTab }) => (
+const TabButton: React.FC<{name: string, activeTab: string, setActiveTab: (name: string) => void, color: string}> = ({ name, activeTab, setActiveTab, color }) => (
     <button 
         onClick={() => setActiveTab(name)}
-        className={`px-4 py-2 -mb-px text-sm font-semibold transition-colors duration-200 ${activeTab === name ? 'border-b-2 border-[#B8E0D2] text-[#B8E0D2]' : 'text-gray-500 border-b-2 border-transparent hover:border-gray-300'}`}
+        className={`w-full px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300 focus:outline-none ${activeTab === name ? 'bg-white shadow-md' : 'text-gray-500'}`}
+        style={{ color: activeTab === name ? color : '' }}
     >
         {name}
     </button>
@@ -38,15 +38,15 @@ const TabButton: React.FC<{name: string, activeTab: string, setActiveTab: (name:
 const Feed: React.FC = () => (
     <div className="space-y-6">
         {mockPosts.map(post => (
-            <div key={post.id} className="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div key={post.id} className="bg-white rounded-3xl shadow-lg overflow-hidden transition-shadow hover:shadow-xl">
                 <div className="p-4 flex items-center space-x-3">
                     <img src={post.avatar} alt={post.author} className="w-10 h-10 rounded-full" />
                     <span className="font-semibold">{post.author}</span>
                 </div>
                 <img src={post.image} alt="Pet post" className="w-full h-auto" />
                 <div className="p-4">
-                    <p className="mb-2">{post.caption}</p>
-                    <div className="flex items-center text-red-500">
+                    <p className="mb-2 text-gray-700">{post.caption}</p>
+                    <div className="flex items-center text-red-400">
                         <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path></svg>
                         <span>{post.likes}</span>
                     </div>
@@ -109,10 +109,10 @@ const VetFinder: React.FC = () => {
     }, []);
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Nearby Vet Finder</h2>
-            <p className="text-gray-500 mb-4">Let our AI find the best vets near you based on your location.</p>
-            <button onClick={handleFindVets} disabled={isLoading || !location} className="w-full bg-[#B8E0D2] text-white font-bold py-3 rounded-xl hover:bg-teal-400 disabled:bg-gray-300">
+        <div className="bg-white p-6 rounded-3xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-2">Nearby Vet Finder</h2>
+            <p className="text-gray-500 mb-4 text-sm">Let our AI find the best vets near you based on your location.</p>
+            <button onClick={handleFindVets} disabled={isLoading || !location} className="w-full bg-gradient-to-r from-[var(--accent)] to-[#8ac9b8] text-white font-bold py-3 rounded-xl hover:shadow-xl transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 transform hover:scale-105">
                 {isLoading ? 'Searching...' : 'Find Vets Now'}
             </button>
             {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
@@ -120,7 +120,7 @@ const VetFinder: React.FC = () => {
                 <div className="mt-6 space-y-3">
                     <h3 className="font-semibold">Top Vets Near You:</h3>
                     {vets.map((vet, index) => (
-                        <a href={vet.uri} key={index} target="_blank" rel="noopener noreferrer" className="block p-3 bg-green-50 rounded-lg hover:bg-green-100">
+                        <a href={vet.uri} key={index} target="_blank" rel="noopener noreferrer" className="block p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                             <p className="font-semibold text-green-800">{vet.title}</p>
                             <p className="text-sm text-green-600">Click to view on map</p>
                         </a>

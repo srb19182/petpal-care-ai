@@ -14,12 +14,12 @@ const iconMap: { [key: string]: React.ReactNode } = {
     medicine: <MedicineIcon className="w-6 h-6 text-white" />,
     sleep: <SleepIcon className="w-6 h-6 text-white" />,
 };
-const colorMap: { [key: string]: string } = {
-    food: 'bg-[#FFD166]',
-    water: 'bg-[#A2D2FF]',
-    walk: 'bg-[#B8E0D2]',
-    medicine: 'bg-[#FFC8DD]',
-    sleep: 'bg-gray-400',
+const colorMap: { [key:string]: string } = {
+    food: 'bg-gradient-to-br from-[var(--highlight)] to-[#fca63c]',
+    water: 'bg-gradient-to-br from-[var(--primary)] to-[#80baf8]',
+    walk: 'bg-gradient-to-br from-[var(--accent)] to-[#8ac9b8]',
+    medicine: 'bg-gradient-to-br from-[var(--secondary)] to-[#f89ac1]',
+    sleep: 'bg-gradient-to-br from-gray-400 to-gray-600',
 }
 
 const Routine: React.FC<RoutineProps> = ({ pet }) => {
@@ -31,7 +31,8 @@ const Routine: React.FC<RoutineProps> = ({ pet }) => {
 
     useEffect(() => {
         const savedRoutines = JSON.parse(localStorage.getItem('routines') || '{}');
-        setRoutine(savedRoutines[pet.id] || []);
+        const petRoutine = savedRoutines[pet.id] || [];
+        setRoutine(petRoutine.sort((a,b) => a.time.localeCompare(b.time)));
     }, [pet.id]);
 
     useEffect(() => {
@@ -88,14 +89,14 @@ const Routine: React.FC<RoutineProps> = ({ pet }) => {
     };
 
     return (
-        <div className="p-6 pb-24">
+        <div className="p-6 pb-28">
             <h1 className="text-3xl font-bold mb-2">Daily Routine</h1>
             <p className="text-gray-500 mb-6">A plan to keep {pet.name} happy and healthy.</p>
 
-            <div className="bg-white p-6 rounded-2xl shadow-md mb-6">
-                <h2 className="text-xl font-semibold mb-1">Smart Routine Planner</h2>
-                <p className="text-sm text-gray-500 mb-4">AI + You: The perfect team</p>
-                <div className="flex justify-between items-center text-sm mb-4">
+            <div className="bg-gradient-to-br from-blue-50 to-pink-50 p-6 rounded-3xl shadow-lg mb-8">
+                <h2 className="text-xl font-semibold mb-1 text-gray-800">Smart Routine Planner</h2>
+                <p className="text-sm text-gray-500 mb-4">AI + You: The perfect team for {pet.name}</p>
+                <div className="flex justify-between items-center text-sm mb-4 bg-white/50 p-3 rounded-xl text-gray-700">
                     <span><span className="font-semibold">Breed:</span> {pet.breed}</span>
                     <span><span className="font-semibold">Age:</span> {pet.age}</span>
                     <span><span className="font-semibold">Weight:</span> {pet.weight}</span>
@@ -103,7 +104,7 @@ const Routine: React.FC<RoutineProps> = ({ pet }) => {
                 <button
                     onClick={handleGenerateRoutine}
                     disabled={isLoading}
-                    className="w-full bg-[#A2D2FF] text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-500 transition-colors disabled:bg-gray-300"
+                    className="w-full bg-gradient-to-r from-[var(--primary)] to-[#80baf8] text-white font-bold py-3 px-4 rounded-xl hover:shadow-xl transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 transform hover:scale-105"
                 >
                     {isLoading ? 'Merging Suggestions...' : '✨ Merge AI-Powered Routine'}
                 </button>
@@ -115,12 +116,12 @@ const Routine: React.FC<RoutineProps> = ({ pet }) => {
                 {routine.length > 0 ? (
                     <div className="space-y-4">
                         {routine.map((item) => (
-                            <div key={item.id} className="bg-white p-4 rounded-2xl shadow-md flex items-center space-x-4">
-                                <div className={`p-3 rounded-full ${colorMap[item.icon] || 'bg-gray-400'}`}>
+                            <div key={item.id} className="bg-white p-4 rounded-2xl shadow-md flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
+                                <div className={`p-4 rounded-xl shadow-inner ${colorMap[item.icon] || 'bg-gray-400'}`}>
                                     {iconMap[item.icon] || <div className="w-6 h-6" />}
                                 </div>
                                 <div className="flex-grow">
-                                    <p className="font-semibold">{item.activity}</p>
+                                    <p className="font-semibold text-lg text-gray-800">{item.activity}</p>
                                     <p className="text-sm text-gray-500">{item.details}</p>
                                 </div>
                                 <span className="text-sm font-medium text-gray-600 mr-2">{item.time}</span>
@@ -132,14 +133,14 @@ const Routine: React.FC<RoutineProps> = ({ pet }) => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-8 px-4 bg-gray-50 rounded-2xl">
+                    <div className="text-center py-10 px-4 bg-gray-50 rounded-3xl">
                         <p className="text-gray-500">No routine items yet for {pet.name}.</p>
-                        <p className="text-gray-400 text-sm">Tap '+' to add a task or generate an AI routine to start!</p>
+                        <p className="text-gray-400 text-sm mt-1">Tap '+' to add a task or generate an AI routine to start!</p>
                     </div>
                 )}
             </div>
 
-            <button onClick={() => handleOpenModal()} className="fixed bottom-24 right-6 bg-[#FFC8DD] text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-3xl font-bold hover:bg-pink-400 transition-transform transform hover:scale-110 z-40">
+            <button onClick={() => handleOpenModal()} className="fixed bottom-28 right-6 bg-gradient-to-r from-[var(--secondary)] to-[#f89ac1] text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center text-4xl font-light hover:shadow-xl transition-transform transform hover:scale-110 hover:rotate-90 z-40">
                 +
             </button>
 
@@ -162,33 +163,35 @@ const RoutineModal: React.FC<{item: RoutineItem, onSave: (item: RoutineItem) => 
         e.preventDefault();
         onSave(formData);
     };
+    
+    const inputClasses = "mt-1 block w-full bg-white/60 backdrop-blur-sm border border-gray-300/50 rounded-lg shadow-sm p-3 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition";
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-            <div className="bg-white p-6 rounded-2xl shadow-xl w-11/12 max-w-md">
-                <h2 className="text-xl font-bold mb-4">{item.activity ? 'Edit' : 'Add'} Routine Item</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in p-4">
+            <div className="bg-gradient-to-br from-blue-50 to-pink-50 p-6 rounded-3xl shadow-xl w-full max-w-md">
+                <h2 className="text-xl font-bold mb-4 text-gray-700">{item.activity ? 'Edit' : 'Add'} Routine Item</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Activity</label>
-                        <input type="text" name="activity" value={formData.activity || ''} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#A2D2FF] focus:border-[#A2D2FF]" required />
+                        <input type="text" name="activity" value={formData.activity || ''} onChange={handleChange} className={inputClasses} required />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Time</label>
-                        <input type="time" name="time" value={formData.time || ''} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#A2D2FF] focus:border-[#A2D2FF]" required />
+                        <input type="time" name="time" value={formData.time || ''} onChange={handleChange} className={inputClasses} required />
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-gray-700">Details</label>
-                        <input type="text" name="details" value={formData.details || ''} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#A2D2FF] focus:border-[#A2D2FF]" />
+                        <input type="text" name="details" value={formData.details || ''} onChange={handleChange} className={inputClasses} />
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-gray-700">Icon</label>
-                        <select name="icon" value={formData.icon || 'food'} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#A2D2FF] focus:border-[#A2D2FF]">
+                        <select name="icon" value={formData.icon || 'food'} onChange={handleChange} className={inputClasses}>
                             {Object.keys(iconMap).map(icon => <option key={icon} value={icon}>{icon.charAt(0).toUpperCase() + icon.slice(1)}</option>)}
                         </select>
                     </div>
-                    <div className="flex justify-end space-x-2 pt-4">
-                        <button type="button" onClick={onClose} className="py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Cancel</button>
-                        <button type="submit" className="py-2 px-4 bg-[#A2D2FF] text-white rounded-lg hover:bg-blue-500">Save</button>
+                    <div className="flex justify-end space-x-3 pt-4">
+                        <button type="button" onClick={onClose} className="py-2 px-5 bg-white/80 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-gray-200/50 border border-gray-200">Cancel</button>
+                        <button type="submit" className="py-2 px-5 bg-[var(--primary)] text-white font-semibold rounded-lg hover:bg-blue-400 transition-colors shadow-sm">Save</button>
                     </div>
                 </form>
             </div>
